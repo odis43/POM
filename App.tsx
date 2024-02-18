@@ -1,118 +1,104 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {PaperProvider} from 'react-native-paper';
+import Entry from './pages/Entry';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Budgeting from './pages/Budgeting';
+import Options from './pages/Options';
+import Stats from './pages/Stats';
+import useAuth from './hooks/useAuth';
+import {useEffect} from 'react';
+import {db_pom, auth} from './config/firebase';
+import {doc, getDoc} from 'firebase/firestore';
+import {onAuthStateChanged} from 'firebase/auth';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+function App() {
+  const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
+  const {user} = useAuth();
+  useEffect(() => {
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        console.log('user is signed in');
+      } else {
+        console.log('user is not signed in yet');
+      }
+    });
+  }, []);
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <PaperProvider>
+      <NavigationContainer>
+        {user ? (
+          <Tab.Navigator
+            screenOptions={{headerShown: false}}
+            initialRouteName="Budgeting">
+            <Tab.Screen
+              name="Budgeting"
+              component={Budgeting}
+              options={{
+                tabBarInactiveTintColor: '#000000',
+                tabBarActiveTintColor: '#B32F2F',
+                headerPressColor: '#B32F2F',
+                tabBarLabel: 'Budgeting',
+                // tabBarIcon: () => (
+                //   <MaterialCommunityIcons
+                //     name="account"
+                //     size={20}
+                //     color="#4F8EF7"
+                //   />
+                // ),
+              }}
+            />
+            <Tab.Screen
+              name="Statistics"
+              component={Stats}
+              options={{
+                tabBarInactiveTintColor: '#000000',
+                tabBarActiveTintColor: '#B32F2F',
+                headerPressColor: '#B32F2F',
+                tabBarLabel: 'Statistics',
+                // tabBarIcon: () => (
+                //   <MaterialCommunityIcons
+                //     name="graph"
+                //     size={20}
+                //     color="#4F8EF7"
+                //   />
+                // ),
+              }}
+            />
+            <Tab.Screen
+              name="Options"
+              component={Options}
+              options={{
+                tabBarInactiveTintColor: '#000000',
+                tabBarActiveTintColor: '#B32F2F',
+                headerPressColor: '#B32F2F',
+                tabBarLabel: 'Options',
+                // tabBarIcon: () => (
+                //   <MaterialCommunityIcons
+                //     name="abacus"
+                //     size={20}
+                //     color="#4F8EF7"
+                //   />
+                // ),
+              }}
+            />
+          </Tab.Navigator>
+        ) : (
+          <Stack.Navigator
+            initialRouteName="Entry"
+            screenOptions={{headerShown: false}}>
+            <Stack.Screen name="Entry" component={Entry} />
+            <Stack.Screen name="Signup" component={Signup} />
+            <Stack.Screen name="Login" component={Login} />
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
