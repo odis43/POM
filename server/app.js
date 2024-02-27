@@ -255,8 +255,12 @@ app.get('/api/auth', function (request, response, next) {
 app.get('/api/transactions', function (request, response, next) {
   Promise.resolve()
     .then(async function () {
+      const uid = request.headers.uid;
+      const userDoc = await db.collection('users').doc(uid).get();
+      const AT = userDoc.data().ACCESS_TOKEN;
+      console.log(AT);
       // Set cursor to empty to receive all historical updates
-      let cursor = null;
+      let cursor = userDoc.data().CURSOR === '' ? null : userDoc.data().CURSOR;
 
       // New transaction updates since "cursor"
       let added = [];
@@ -264,10 +268,12 @@ app.get('/api/transactions', function (request, response, next) {
       // Removed transaction ids
       let removed = [];
       let hasMore = true;
+
+      console.log(AT);
       // Iterate through each page of new transaction updates for item
       while (hasMore) {
         const request = {
-          access_token: ACCESS_TOKEN,
+          access_token: AT,
           cursor: cursor,
         };
         const response = await client.transactionsSync(request);
@@ -279,6 +285,18 @@ app.get('/api/transactions', function (request, response, next) {
         hasMore = data.has_more;
         // Update cursor to the next cursor
         cursor = data.next_cursor;
+        const docRef = db.collection('users').doc(uid);
+        const CURSOR = {
+          CURSOR: cursor,
+        };
+        docRef
+          .update(CURSOR)
+          .then(() => {
+            console.log('new cursor is pushed');
+          })
+          .catch(error => {
+            console.log('error is: ', error);
+          });
         prettyPrintResponse(response);
       }
 

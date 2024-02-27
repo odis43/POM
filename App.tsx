@@ -14,7 +14,9 @@ import {useEffect} from 'react';
 import {db_pom, auth} from './config/firebase';
 import {doc, getDoc} from 'firebase/firestore';
 import {onAuthStateChanged} from 'firebase/auth';
-
+import SplashScreen from 'react-native-splash-screen';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import Foundation from 'react-native-vector-icons/Foundation';
 function App() {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -27,6 +29,18 @@ function App() {
         console.log('user is not signed in yet');
       }
     });
+  }, []);
+
+  useEffect(() => {
+    const ac = new AbortController();
+
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 500);
+
+    return function cleanup() {
+      ac.abort();
+    };
   }, []);
   return (
     <PaperProvider>
@@ -43,13 +57,7 @@ function App() {
                 tabBarActiveTintColor: '#B32F2F',
                 headerPressColor: '#B32F2F',
                 tabBarLabel: 'Budgeting',
-                // tabBarIcon: () => (
-                //   <MaterialCommunityIcons
-                //     name="account"
-                //     size={20}
-                //     color="#4F8EF7"
-                //   />
-                // ),
+                tabBarIcon: () => <FontAwesome6 name={'dollar'} />,
               }}
             />
             <Tab.Screen
@@ -60,13 +68,7 @@ function App() {
                 tabBarActiveTintColor: '#B32F2F',
                 headerPressColor: '#B32F2F',
                 tabBarLabel: 'Statistics',
-                // tabBarIcon: () => (
-                //   <MaterialCommunityIcons
-                //     name="graph"
-                //     size={20}
-                //     color="#4F8EF7"
-                //   />
-                // ),
+                tabBarIcon: () => <Foundation name={'graph-bar'} />,
               }}
             />
             <Tab.Screen
@@ -77,13 +79,7 @@ function App() {
                 tabBarActiveTintColor: '#B32F2F',
                 headerPressColor: '#B32F2F',
                 tabBarLabel: 'Options',
-                // tabBarIcon: () => (
-                //   <MaterialCommunityIcons
-                //     name="abacus"
-                //     size={20}
-                //     color="#4F8EF7"
-                //   />
-                // ),
+                tabBarIcon: () => <FontAwesome6 name={'gear'} />,
               }}
             />
           </Tab.Navigator>

@@ -6,6 +6,7 @@ import LoginButton from '../components/LoginButton.tsx';
 import SignUpButton from '../components/SignUpButton.tsx';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../config/firebase.js';
+import Feather from 'react-native-vector-icons/Feather';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState<string>('');
@@ -45,6 +46,9 @@ const Login = ({navigation}) => {
             <Card.Content>
               <View style={{marginTop: 40}}>
                 <TextInput
+                  theme={{colors: {primary: 'black'}}}
+                  selectionColor="#000000"
+                  mode="flat"
                   autoCapitalize="none"
                   label="Email"
                   value={email}
@@ -52,10 +56,14 @@ const Login = ({navigation}) => {
                   style={{
                     marginBottom: 30,
                     overflow: 'hidden',
+                    backgroundColor: 'white',
                   }}
                 />
                 <View style={loginStyles.inputContainer}>
                   <TextInput
+                    theme={{colors: {primary: 'black'}}}
+                    selectionColor="#000000"
+                    mode="flat"
                     label="Password"
                     value={pass}
                     onChangeText={pass => setPass(pass)}
@@ -64,7 +72,7 @@ const Login = ({navigation}) => {
                     secureTextEntry={!isPasswordVisible}
                   />
                   <IconButton
-                    icon={isPasswordVisible ? 'account' : 'eye'}
+                    icon={isPasswordVisible ? 'eye' : 'eye-off'}
                     size={20}
                     onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                     style={loginStyles.eyeIcon}
@@ -72,7 +80,9 @@ const Login = ({navigation}) => {
                 </View>
               </View>
               {errorMessage ? (
-                <Text style={loginStyles.errorText}>{errorMessage}</Text>
+                <View style={{}}>
+                  <Text style={loginStyles.errorText}>{errorMessage}</Text>
+                </View>
               ) : null}
               <View style={{marginTop: 50}}>
                 <LoginButton onPress={handleSubmit} />
@@ -89,7 +99,7 @@ const Login = ({navigation}) => {
 
 const loginStyles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFF6DF',
+    backgroundColor: '#FFFFFF',
     flex: 1,
   },
   inputContainer: {
@@ -99,6 +109,7 @@ const loginStyles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
+    backgroundColor: 'white',
   },
   eyeIcon: {
     position: 'absolute',
@@ -122,7 +133,6 @@ const loginStyles = StyleSheet.create({
   },
   errorText: {
     color: 'white',
-    marginTop: 10,
   },
 });
 

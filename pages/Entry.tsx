@@ -23,7 +23,7 @@ const Entry = ({navigation}) => {
 const stylesLogin = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF6DF',
+    backgroundColor: '#FFFFFF',
   },
   title: {
     fontFamily: 'LexendDeca',

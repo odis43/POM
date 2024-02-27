@@ -30,6 +30,7 @@ const Signup = ({navigation}) => {
             EMAIL: email,
             UUID: auth.currentUser?.uid,
             ACCESS_TOKEN: '',
+            CURSOR: '',
           });
         } catch (e) {
           console.error('Error adding document: ', e);
@@ -52,7 +53,7 @@ const Signup = ({navigation}) => {
     <View style={stylesSignUp.container}>
       <SafeAreaView>
         <Image source={pomLogo} style={stylesSignUp.logo} />
-        <View style={{paddingLeft: 20, paddingRight: 20, marginTop: 20}}>
+        <View style={{paddingLeft: 20, paddingRight: 20}}>
           <Text
             variant="displaySmall"
             style={{fontFamily: 'LexendDeca', fontWeight: '700'}}>
@@ -65,20 +66,27 @@ const Signup = ({navigation}) => {
         <View style={{paddingLeft: 20, paddingRight: 20, marginTop: 10}}>
           <Card style={stylesSignUp.card}>
             <Card.Content>
-              <View style={{marginTop: 30}}>
+              <View style={{marginTop: 20}}>
                 <View style={stylesSignUp.inputContainer}></View>
                 <View style={stylesSignUp.inputContainer}>
                   <TextInput
+                    underlineColor="transparent"
+                    selectionColor="#000000"
+                    mode="flat"
                     label="Email"
                     value={email}
                     onChangeText={email => setEmail(email)}
                     style={stylesSignUp.textInput}
                     autoCapitalize="none"
                     secureTextEntry={false}
+                    theme={{colors: {primary: 'black'}}}
                   />
                 </View>
                 <View style={stylesSignUp.inputContainer}>
                   <TextInput
+                    theme={{colors: {primary: 'black'}}}
+                    selectionColor="#000000"
+                    mode="flat"
                     label="Password"
                     value={pass}
                     onChangeText={pass => setPass(pass)}
@@ -87,7 +95,7 @@ const Signup = ({navigation}) => {
                     secureTextEntry={!isPasswordVisible}
                   />
                   <IconButton
-                    icon={isPasswordVisible ? 'account' : 'eye'}
+                    icon={isPasswordVisible ? 'eye' : 'eye-off'}
                     size={20}
                     onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                     style={stylesSignUp.eyeIcon}
@@ -112,7 +120,7 @@ const Signup = ({navigation}) => {
 
 const stylesSignUp = StyleSheet.create({
   container: {
-    backgroundColor: '#FFF6DF',
+    backgroundColor: '#FFFFFF',
     flex: 1,
   },
   inputContainer: {
@@ -122,6 +130,7 @@ const stylesSignUp = StyleSheet.create({
   },
   textInput: {
     flex: 1,
+    backgroundColor: 'white',
   },
   eyeIcon: {
     position: 'absolute',
@@ -130,7 +139,7 @@ const stylesSignUp = StyleSheet.create({
   card: {
     marginTop: 20,
     backgroundColor: '#B32F2F',
-    height: 500,
+    height: 450,
   },
   line: {
     height: 1,
@@ -147,7 +156,8 @@ const stylesSignUp = StyleSheet.create({
     marginTop: 120,
   },
   logo: {
-    marginTop: 50,
+    marginTop: 30,
+    marginBottom: 20,
     alignSelf: 'center',
     width: 55,
     height: 55,
