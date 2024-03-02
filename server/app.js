@@ -1,6 +1,7 @@
 // read env vars from .env file
-require('dotenv').config();
+
 const {Configuration, PlaidApi, Products, PlaidEnvironments} = require('plaid');
+require('dotenv').config();
 const util = require('util');
 const {v4: uuidv4} = require('uuid');
 const express = require('express');
@@ -9,6 +10,7 @@ const moment = require('moment');
 const cors = require('cors');
 // const auth = require('../config/firebase.js');
 const APP_PORT = process.env.APP_PORT || 8000;
+
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_SECRET = process.env.PLAID_SECRET;
 const PLAID_ENV = process.env.PLAID_ENV || 'sandbox';
@@ -260,7 +262,12 @@ app.get('/api/transactions', function (request, response, next) {
       const AT = userDoc.data().ACCESS_TOKEN;
       console.log(AT);
       // Set cursor to empty to receive all historical updates
-      let cursor = userDoc.data().CURSOR === '' ? null : userDoc.data().CURSOR;
+      let cursor = null;
+      // if (userDoc.data().CURSOR === '') {
+      //   cursor = null;
+      // } else {
+      //   cursor = userDoc.data().CURSOR;
+      // }
 
       // New transaction updates since "cursor"
       let added = [];
@@ -285,21 +292,23 @@ app.get('/api/transactions', function (request, response, next) {
         hasMore = data.has_more;
         // Update cursor to the next cursor
         cursor = data.next_cursor;
-        const docRef = db.collection('users').doc(uid);
-        const CURSOR = {
-          CURSOR: cursor,
-        };
-        docRef
-          .update(CURSOR)
-          .then(() => {
-            console.log('new cursor is pushed');
-          })
-          .catch(error => {
-            console.log('error is: ', error);
-          });
+
         prettyPrintResponse(response);
       }
 
+      //add the new cursor to the database
+      const docRef = db.collection('users').doc(uid);
+      const CURSOR = {
+        CURSOR: cursor,
+      };
+      docRef
+        .update(CURSOR)
+        .then(() => {
+          console.log('new cursor is pushed');
+        })
+        .catch(error => {
+          console.log('error is: ', error);
+        });
       const compareTxnsByDateAscending = (a, b) =>
         (a.date > b.date) - (a.date < b.date);
       // Return the 8 most recent transactions
@@ -307,6 +316,7 @@ app.get('/api/transactions', function (request, response, next) {
         .sort(compareTxnsByDateAscending)
         .slice(-8);
       response.json({latest_transactions: recently_added});
+      // prettyPrintResponse(response.data.added);
     })
     .catch(next);
 });

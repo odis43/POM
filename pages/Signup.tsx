@@ -11,7 +11,7 @@ import {Card, Text, TextInput, IconButton} from 'react-native-paper';
 import LoginButton from '../components/LoginButton.tsx';
 import SignUpButton from '../components/SignUpButton.tsx';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
-import {doc, setDoc} from 'firebase/firestore';
+import {doc, setDoc, collection} from 'firebase/firestore';
 import {auth, db_pom} from '../config/firebase.js';
 const Signup = ({navigation}) => {
   const [email, setEmail] = useState<string>('');
